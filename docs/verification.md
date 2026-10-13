@@ -44,8 +44,8 @@ Mobile and tablet checks emulate viewport/input characteristics in Chromium; the
 - [GitHub Actions run 38334371659](https://github.com/jasonpagliaro/valheim-sign-generator/actions/runs/38334371659) passed all checks, including the 30 browser cases on Linux Chromium.
 - No paid upgrade, purchased domain, server, or database was used.
 
-## Pending Git integration
+## Git integration
 
 The owner approved adding this repository to Vercel's selected GitHub repositories. That permission was saved and verified through both GitHub's settings page and Vercel's repository lookup. A deployment pulled directly from GitHub commit `fcf745c6995b45ba11367d238d9098f00284d6bc` reached `READY` as `dpl_8JpYq36z4njwofLDKzs9popvzYn6` and received the public production domain. Search, editing, formatting, and real clipboard readback were then rechecked successfully on desktop, mobile, and tablet against that production release.
 
-Automatic deployment on push is still pending: the existing Vercel project is not yet linked to the repository. The connected API supports Git-sourced builds but does not expose an operation to attach Git to an existing unlinked project. The dashboard requires the owner to finish Vercel sign-in. After sign-in, connect this existing project to `jasonpagliaro/valheim-sign-generator`, production branch `main`, and verify a new push results in a `READY` production deployment. Do not create a duplicate project.
+The existing Vercel project is connected to `jasonpagliaro/valheim-sign-generator` through the native GitHub integration. Both the dashboard and Vercel's Git deployment context confirmed that connection. The production branch is `main`; Vercel builds pushes through this connection, while GitHub Actions independently runs the repository checks. CI is not configured as a Vercel promotion gate. No duplicate Vercel project or deployment token was created.
