@@ -1,8 +1,11 @@
 import baseline from './baseline.json'
+import { withStorageGroups } from './groups'
+import { withCurrentInventory } from './inventory'
 
-export const CATEGORIES = ['Meadows', 'Black Forest', 'Swamp', 'Mountains', 'Plains', 'Ocean', 'Food & Mead', 'Equipment & Misc'] as const
+export const BASELINE_CATEGORIES = ['Meadows', 'Black Forest', 'Swamp', 'Mountains', 'Plains', 'Ocean', 'Food & Mead', 'Equipment & Misc'] as const
+export const CATEGORIES = ['Meadows', 'Black Forest', 'Swamp', 'Mountains', 'Plains', 'Mistlands', 'Ashlands', 'Deep North', 'Ocean', 'Food & Mead', 'Equipment & Misc'] as const
 export type Category = typeof CATEGORIES[number]
-export type ItemStatus = 'practical' | 'special' | 'legacy' | 'later'
+export type ItemStatus = 'practical' | 'special' | 'legacy'
 export interface CatalogItem {
   id: string
   name: string
@@ -14,6 +17,9 @@ export interface CatalogItem {
   kind?: 'storage'
   alias?: string
   note?: string
+  searchTerms?: string[]
+  prefabs?: string[]
+  itemType?: string
 }
 
 const annotations: Record<string, Partial<Pick<CatalogItem, 'alias' | 'status' | 'note'>>> = {
@@ -33,7 +39,7 @@ const annotations: Record<string, Partial<Pick<CatalogItem, 'alias' | 'status' |
   'Ancient seed': { status: 'special', note: 'Offering and progression resource.' },
   'Withered bone': { status: 'special', note: 'Offering and progression resource.' },
   'Yagluth thing': { status: 'legacy', note: 'Obsolete placeholder, replaced by Torn spirit. Preserved from the original catalog.' },
-  'Torn spirit': { status: 'later', note: 'Obtained at the end of Plains; used in later progression.' },
+  'Torn spirit': { status: 'special', note: 'Obtained at the end of Plains; used in later progression.' },
   'Eikthyr trophy': { status: 'special', note: 'Boss trophy and progression item.' },
   'Elder trophy': { status: 'special', alias: 'The Elder trophy', note: 'Boss trophy and progression item.' },
   'Bonemass trophy': { status: 'special', note: 'Boss trophy and progression item.' },
@@ -54,7 +60,7 @@ const annotations: Record<string, Partial<Pick<CatalogItem, 'alias' | 'status' |
 
 const storageNames = new Set(['Fish', 'Mead base', 'Healing mead', 'Stamina mead', 'Arrows', 'Weapons', 'Armor', 'Shields', 'Tools', 'Potions', 'Trophies', 'Treasure', 'Seeds', 'Portal supplies', 'Building supplies', 'Dungeon loot', 'Extra gear', 'Repair supplies', 'Black metal chest'])
 
-export const BASELINE_ITEMS: CatalogItem[] = CATEGORIES.flatMap(category =>
+export const BASELINE_ITEMS: CatalogItem[] = BASELINE_CATEGORIES.flatMap(category =>
   baseline[category].map(([name, symbol, color]) => ({
     id: `${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     name, symbol, color, category, source: 'baseline' as const,
@@ -67,7 +73,7 @@ export const BASELINE_ITEMS: CatalogItem[] = CATEGORIES.flatMap(category =>
 function addition(category: Category, name: string, symbol: string, color: string, extra: Partial<Pick<CatalogItem, 'status' | 'kind' | 'note'>> = {}): CatalogItem {
   return { id: `added-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name, symbol, color, category, source: 'addition', status: 'practical', ...extra }
 }
-export const ADDED_ITEMS: CatalogItem[] = [
+const CURATED_ADDITIONS: CatalogItem[] = [
   addition('Meadows', 'Feathers', '✧', 'E5DEC5'),
   addition('Black Forest', 'Fir cone', '◆', 'B9C28A'),
   addition('Black Forest', 'Pine cone', '◆', 'CBB17D'),
@@ -103,16 +109,17 @@ export const ADDED_ITEMS: CatalogItem[] = [
   addition('Equipment & Misc', 'Fishing supplies', '◈', 'A6D4D7', { kind: 'storage', note: 'An authored grouping for rods, bait, and fishing supplies.' }),
   addition('Equipment & Misc', 'Cooking ingredients', '✿', 'E7C98D', { kind: 'storage', note: 'An authored grouping for shared kitchen supplies.' }),
   addition('Equipment & Misc', 'Trinkets', '◆', 'CEB1E4', { kind: 'storage', status: 'special', note: 'An authored grouping for unlockable equipment.' }),
-  addition('Equipment & Misc', 'Battle idols', '◆', 'DCAC89', { kind: 'storage', status: 'special', note: 'An authored grouping. Individual tiers are intentionally omitted.' }),
-  addition('Equipment & Misc', 'Protection idols', '◆', 'A9C2DE', { kind: 'storage', status: 'special', note: 'An authored grouping. Individual tiers are intentionally omitted.' }),
+  addition('Equipment & Misc', 'Battle idols', '◆', 'DCAC89', { kind: 'storage', status: 'special', note: 'An authored grouping for battle idols across progression tiers.' }),
+  addition('Equipment & Misc', 'Protection idols', '◆', 'A9C2DE', { kind: 'storage', status: 'special', note: 'An authored grouping for protection idols across progression tiers.' }),
 ]
-export const CATALOG = [...BASELINE_ITEMS, ...ADDED_ITEMS]
+export const CATALOG = withStorageGroups(withCurrentInventory([...BASELINE_ITEMS, ...CURATED_ADDITIONS]))
+export const ADDED_ITEMS = CATALOG.filter(item => item.source === 'addition')
 export const DEFAULT_ITEM = CATALOG.find(item => item.name === 'Copper')!
 
 export interface FilterOptions {
   query: string
   category: Category | 'All'
-  collection: 'all' | 'favorites' | 'recent'
+  collection: 'all' | 'groups' | 'favorites' | 'recent'
   favorites: string[]
   recent: string[]
   includeSpecial: boolean
@@ -124,11 +131,12 @@ export function filterCatalog(items: CatalogItem[], options: FilterOptions): Cat
   const query = options.query.trim().toLocaleLowerCase()
   const result = items.filter(item => {
     if (item.status === 'special' && !options.includeSpecial) return false
-    if (['legacy', 'later'].includes(item.status) && !options.includeExtended) return false
+    if (item.status === 'legacy' && !options.includeExtended) return false
     if (options.category !== 'All' && item.category !== options.category) return false
     if (options.collection === 'favorites' && !options.favorites.includes(item.id)) return false
     if (options.collection === 'recent' && !options.recent.includes(item.id)) return false
-    return !query || `${item.name} ${item.alias ?? ''}`.toLocaleLowerCase().includes(query)
+    if (options.collection === 'groups' && item.kind !== 'storage') return false
+    return !query || `${item.name} ${item.alias ?? ''} ${(item.searchTerms ?? []).join(' ')}`.toLocaleLowerCase().includes(query)
   })
   if (options.collection === 'recent') return result.sort((a, b) => options.recent.indexOf(a.id) - options.recent.indexOf(b.id))
   if (options.sort === 'alphabetical') return result.sort((a, b) => a.name.localeCompare(b.name))

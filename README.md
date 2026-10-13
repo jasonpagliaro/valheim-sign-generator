@@ -8,13 +8,13 @@ A small workshop for a well-kept great hall. Browse resources, style a wooden si
 
 ## Features
 
-- **221 catalog entries:** all 184 supplied names, symbols, colors, and categories preserved, plus 37 separately identified additions. The practical default shows 200; boss drops, unlockable groups, legacy labels, and later progression are opt-in.
-- Eight biome/category filters, case-insensitive search with current-name aliases and highlighting, alphabetical/progression sorting, favorites, and recent items.
-- Custom labels, six presets, resource/hearth palettes, editable colors, bold/italic, size, symbols, and opt-in alignment/multiple lines.
+- **943 labels:** 893 current inventory items, 48 storage groups, and two preserved legacy labels. All 184 supplied names, symbols, colors, and categories remain unchanged. The default shows 941 labels across progression through the Deep North.
+- Eleven biome/category filters, a dedicated Groups view, search by current names, aliases, and group members, alphabetical/progression sorting, favorites, and recent items.
+- **Temporary custom labels:** start blank or turn any search into a sign. Draft text, names, and custom symbols are never auto-saved or added to the catalog; reload clears them. Six presets, editable colors, bold/italic, size, symbols, and opt-in alignment/multiple lines remain available.
 - Original CSS wooden-sign preview with dark/light timber. No game images, fonts, or other game assets are redistributed.
 - Compact or explicitly closed markup, per-entry copy, plain-text copy, ASCII fallback, and complete-category JSON copy.
 - Verified **50 UTF-16-unit** input counter, including tags and line-break escapes. Long input is never silently truncated.
-- Browser-local preferences, validated JSON import/export, and self-contained share links that do not overwrite saved editor settings.
+- Browser-local formatting preferences and catalog favorites/recents. JSON export and self-contained share links preserve a configuration only when explicitly chosen; opening a shared sign does not overwrite saved formatting.
 - Keyboard navigation, `/` to search, Ctrl/Cmd+Shift+C to copy, accessible native dialogs, and a mobile editor/copy bar.
 - Clipboard API with a selection-based fallback and a manual-copy dialog if access is denied.
 
@@ -43,7 +43,7 @@ Runtime dependencies are React, React DOM, and Lucide. Vite, TypeScript, Tailwin
 
 ## Compatibility with vanilla signs
 
-Research was checked against the installed **Valheim 1.0.17, Steam build 25730771**, on October 12, 2026. This combines read-only assembly/prefab/font inspection and linked primary sources; it is not an in-game visual acceptance test or a guarantee across platforms.
+Research was checked against the installed **Valheim 1.0.17, Steam build 25730771**: sign compatibility on October 12 and the complete inventory census on October 13, 2026. This combines read-only assembly/prefab/font inspection and linked primary sources; it is not an in-game visual acceptance test or a guarantee across platforms.
 
 ```text
 <#E8A575><b>⛏ COPPER
@@ -67,10 +67,12 @@ See the [full compatibility record](docs/compatibility-research.md) for methods,
 ## Catalog maintenance
 
 - `src/data/baseline.json` is the unchanged, supplied three-field dataset. A fixed SHA-256 test protects all original tuples and category counts.
-- `src/data/catalog.ts` adds typed metadata and aliases; it keeps verified additions separate. Original names remain the default labels and searchable display names.
+- `src/data/current-items.json` records 893 accepted native item identities and current English names. `inventory.ts` attaches them to preserved labels or adds individual labels; no accepted identity is dropped or duplicated.
+- `src/data/catalog.ts` adds typed metadata and aliases. Original names remain the default labels and searchable display names. `groups.ts` supplies authored storage groups and member searches.
 - Corrections such as Oak seeds → Acorns and Bear pelt → Bear hide appear as aliases. Yagluth thing is retained as legacy, and Ooze trophy is retained with an unverified note.
-- Generic storage groups are labeled as groups. Special/progression items are hidden by default, as are legacy and later-progression labels.
-- This is a practical through-Plains catalog, not an exhaustive current-game item database. [The audit](docs/catalog-audit.md) identifies remaining expansion opportunities and evidence limits.
+- Current items, including special/progression items, are visible by default. Legacy originals are opt-in; five seasonal or entitlement items have condition notes. Generic storage groups carry a group badge.
+- [The audit](docs/catalog-audit.md) and [complete census](docs/inventory-census.json) account for all 1,519 native item prefabs: 893 accepted, 615 excluded, and 11 unresolved. This is a configured-acquisition audit, not a playthrough of every route. NPC attacks, character customization, inactive duplicates, and unused objects are not ordinary inventory labels.
+- Preferences use a versioned whitelist containing only formatting, wood, and catalog IDs. Loading old version 1 preferences removes their stored draft content before migration. Custom input never enters favorites, recent items, local storage, or session storage. Explicit export/share remains the user's choice.
 
 ## Deploy to Vercel
 

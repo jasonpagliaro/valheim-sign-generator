@@ -6,7 +6,7 @@ import SignOutput from './components/SignOutput'
 import Guide from './components/Guide'
 import { CATALOG, DEFAULT_ITEM, filterCatalog, type CatalogItem, type FilterOptions } from './data/catalog'
 import { applyPreset, exportCategory, generateSign, itemSign, type Preset, type SignConfig } from './lib/sign'
-import { addRecent, createShareUrl, loadPreferences, parseSignFile, readSharedSign, savePreferences, serializeSign } from './lib/storage'
+import { addRecent, createShareUrl, loadPreferences, parseSignFile, readSharedSign, savePreferences, serializeSign, signFormat } from './lib/storage'
 import { copyText } from './lib/clipboard'
 
 function bootstrap() {
@@ -15,17 +15,21 @@ function bootstrap() {
   try { saved = loadPreferences(window.localStorage) } catch { error = 'Browser storage is unavailable. You can still create, copy, and export signs.' }
   let shared = null
   try { shared = readSharedSign(window.location.search) } catch { error = 'This shared sign could not be read. Your saved workspace is open instead.' }
-  return { sign: shared?.sign ?? saved?.sign ?? itemSign(DEFAULT_ITEM), wood: shared?.wood ?? saved?.wood ?? 'dark' as const, favorites: saved?.favorites ?? [], recent: saved?.recent ?? [], shared: !!shared, saved, error }
+  const selectedId = shared ? null : saved?.selectedId ?? DEFAULT_ITEM.id
+  const savedItem = CATALOG.find(item => item.id === selectedId) ?? DEFAULT_ITEM
+  const restoredSign = { ...itemSign(savedItem), ...saved?.format }
+  return { sign: shared?.sign ?? restoredSign, selectedId, wood: shared?.wood ?? saved?.wood ?? 'dark' as const, favorites: saved?.favorites ?? [], recent: saved?.recent ?? [], shared: !!shared, saved, error }
 }
+function temporarySign(text = '') { return { ...itemSign({ name: 'Custom label', symbol: '◆', color: 'E3BF7B' }), text, symbolEnabled: false } }
 
 export default function App() {
   const [initial] = useState(bootstrap)
   const [sign, setSign] = useState(initial.sign)
   const [wood, setWood] = useState<'dark' | 'light'>(initial.wood)
-  const [selectedId, setSelectedId] = useState<string | null>(CATALOG.find(item => item.name === initial.sign.name)?.id ?? null)
+  const [selectedId, setSelectedId] = useState<string | null>(initial.selectedId)
   const [favorites, setFavorites] = useState(initial.favorites)
   const [recent, setRecent] = useState(initial.recent)
-  const [filters, setFilters] = useState<Omit<FilterOptions, 'favorites' | 'recent'>>({ query: '', category: 'All', collection: 'all', includeSpecial: false, includeExtended: false, sort: 'progression' })
+  const [filters, setFilters] = useState<Omit<FilterOptions, 'favorites' | 'recent'>>({ query: '', category: 'All', collection: 'all', includeSpecial: true, includeExtended: false, sort: 'progression' })
   const [copied, setCopied] = useState('')
   const [notice, setNotice] = useState(initial.error)
   const [manualCopy, setManualCopy] = useState<string | null>(null)
@@ -39,12 +43,13 @@ export default function App() {
     let saved = false
     try {
       saved = savePreferences(window.localStorage, {
-        sign: initial.shared ? initial.saved?.sign ?? itemSign(DEFAULT_ITEM) : sign,
+        format: initial.shared ? initial.saved?.format ?? signFormat(itemSign(DEFAULT_ITEM)) : signFormat(sign),
+        selectedId: initial.shared ? initial.saved?.selectedId ?? DEFAULT_ITEM.id : selectedId,
         wood: initial.shared ? initial.saved?.wood ?? 'dark' : wood, favorites, recent,
       })
     } catch { /* Access to localStorage itself can be restricted. */ }
     if (storageWarningRef.current) storageWarningRef.current.hidden = saved
-  }, [sign, wood, favorites, recent, initial])
+  }, [sign, selectedId, wood, favorites, recent, initial])
   useEffect(() => {
     if (!copied) return
     const timer = window.setTimeout(() => setCopied(''), 2500)
@@ -85,8 +90,8 @@ export default function App() {
     if (result.overLimit) { selectItem(item); setNotice(`${item.name} needs a shorter label with this preset. It is open in the editor.`); return }
     await copy(result.markup, item.id, `${item.name} label copied.`)
   }
-  function createCustom() {
-    setSelectedId(null); setSign(itemSign({ name: 'Custom label', symbol: '◆', color: 'E3BF7B' }));
+  function createCustom(text = '') {
+    setSelectedId(null); setSign(temporarySign(text)); setNotice('Temporary label ready. Copy it before leaving; its text is not saved in this browser.');
     document.getElementById('workshop')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     window.setTimeout(() => document.getElementById('sign-text')?.focus({ preventScroll: true }), 150)
   }
@@ -102,7 +107,7 @@ export default function App() {
     try {
       if (file.size > 100000) throw new Error('Choose a sign configuration smaller than 100 KB.')
       const parsed = parseSignFile(JSON.parse(await file.text()))
-      setSign(parsed.sign); setWood(parsed.wood); setSelectedId(CATALOG.find(item => item.name === parsed.sign.name)?.id ?? null)
+      setSign(parsed.sign); setWood(parsed.wood); setSelectedId(null)
       setNotice('Sign imported. Review it in the editor before copying.')
     } catch (error) { setNotice(error instanceof Error ? error.message : 'That file could not be imported.') }
   }
@@ -114,8 +119,8 @@ export default function App() {
     <main className="app-main">
       <section className="intro"><div><div className="eyebrow intro-eyebrow"><span className="tiny-diamond" /> A PLACE FOR EVERY TREASURE</div><h1>Less searching. <em>More adventuring.</em></h1><p>Turn a chest full of chaos into a well-kept hall. Craft a sign, copy the code, make it home.</p></div><div className="intro-note"><span className="intro-rune" aria-hidden="true">ᛟ</span><span>MADE FOR YOUR WORLD<small>No mods. Just a little order.</small></span></div></section>
       {initial.shared && <div className="shared-banner"><LinkNotice />You’re editing a shared sign. Your saved editor preferences stay unchanged.</div>}
-      <p ref={storageWarningRef} hidden className="warning-box">Local saving is unavailable in this browser. Use Export JSON to keep your work.</p>
-      <div className="workspace"><Catalog filters={{ ...filters, favorites, recent }} setFilters={change => setFilters(current => ({ ...current, ...change }))} selectedId={selectedId} onSelect={selectItem} onCopy={item => void copyItem(item)} onFavorite={favorite} onCustom={createCustom} copied={copied} /><div className="crafting-area"><SignEditor sign={sign} wood={wood} item={selectedItem} custom={!selectedItem} patch={patch} setWood={setWood} onPreset={choosePreset} onReset={() => setSign(itemSign(selectedItem ?? { name: 'Custom label', symbol: '◆', color: 'E3BF7B' }))} /><SignOutput sign={sign} copied={copied} onCopy={(...args) => void copy(...args)} patch={patch} onShare={() => void copy(createShareUrl(sign, wood, window.location.href), 'share', 'Share link copied. It includes this sign, not your local preferences.')} onExport={exportFile} onImport={() => importRef.current?.click()} onGuide={() => guideRef.current?.showModal()} onBatch={() => void copy(exportCategory(batchItems, sign.preset), 'batch', `${batchItems.length} labels copied as JSON.`)} batchCount={batchItems.length} batchName={filters.category === 'All' ? 'catalog' : filters.category} /></div></div>
+      <p ref={storageWarningRef} hidden className="warning-box">Browser preferences could not be saved. Sign text is always temporary; you can still copy it.</p>
+      <div className="workspace"><Catalog filters={{ ...filters, favorites, recent }} setFilters={change => setFilters(current => ({ ...current, ...change }))} selectedId={selectedId} onSelect={selectItem} onCopy={item => void copyItem(item)} onFavorite={favorite} onCustom={createCustom} copied={copied} /><div className="crafting-area"><SignEditor sign={sign} wood={wood} item={selectedItem} custom={!selectedItem} patch={patch} setWood={setWood} onPreset={choosePreset} onReset={() => setSign(selectedItem ? itemSign(selectedItem) : temporarySign())} /><SignOutput sign={sign} copied={copied} onCopy={(...args) => void copy(...args)} patch={patch} onShare={() => void copy(createShareUrl(sign, wood, window.location.href), 'share', 'Share link copied. It includes this sign, not your local preferences.')} onExport={exportFile} onImport={() => importRef.current?.click()} onGuide={() => guideRef.current?.showModal()} onBatch={() => void copy(exportCategory(batchItems, sign.preset), 'batch', `${batchItems.length} labels copied as JSON.`)} batchCount={batchItems.length} batchName={filters.category === 'All' ? 'catalog' : filters.category} /></div></div>
       <footer className="app-footer"><span className="footer-mark">ᛟ</span><p>Built for the quiet satisfaction of an organized chest.<small>Independent fan-made tool. Not affiliated with Iron Gate Studio.</small></p><span className="local-badge"><i /> All crafting happens in your browser</span></footer>
     </main>
     <div className="mobile-dock"><a href="#catalog">Catalog</a><a href="#workshop">Editor</a><button disabled={result.overLimit || !!result.errors.length} onClick={() => void copy(result.markup, 'markup', 'Sign code copied. Your stores await.')}><CopyDock copied={copied === 'markup'} /></button></div>

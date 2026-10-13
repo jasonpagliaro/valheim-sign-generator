@@ -132,6 +132,8 @@ kbd { border:1px solid #404737; border-radius:3px; min-width:17px; height:19px; 
 label.field-label:has(input) { display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-bottom:16px; }
 .text-editor { width:100%; font-size:13px; line-height:1.6; min-height:61px; }
 .item-note { margin-top:5px; font-size:10px; color:#a6b199; line-height:1.6; }
+.draft-notice { border:1px dashed #756440; border-radius:5px; padding:10px 12px; margin:16px 0; color:#bac4ad; font-size:11px; line-height:1.7; }
+.draft-notice strong { display:block; color:#e3c38d; font-weight:600; }
 .shorten-button { display:block; font-size:9px; color:#bfc9ad; padding:7px 0 0; text-align:left; }
 .shorten-button strong { color:var(--gold); font-weight:400; }
 .format-grid { display:grid; grid-template-columns:1.4fr .75fr 1fr; gap:13px; margin-top:19px; }

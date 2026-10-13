@@ -27,7 +27,7 @@ test('copies a catalog entry and a complete category', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Edit Wood', exact: true })).toHaveCount(0)
   await page.getByRole('button', { name: 'Copy Ocean', exact: true }).click()
   const payload = JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))
-  expect(payload.labels.length).toBe(20)
+  expect(payload.labels.length).toBeGreaterThanOrEqual(20)
   expect(payload.labels.every((item: { category: string }) => item.category === 'Ocean')).toBe(true)
 })
 
@@ -62,7 +62,7 @@ test('warns about overflow, rejects markup input, and previews text safely', asy
 
 test('custom labels support editing, presets, symbols and advanced multiline', async ({ page }) => {
   await page.getByRole('button', { name: /Create a custom label/ }).click()
-  await page.getByLabel('Custom label name').fill('My pantry')
+  await expect(page.getByText('Temporary custom sign', { exact: true })).toBeVisible()
   await page.getByLabel('Sign text', { exact: true }).fill('PANTRY')
   await page.getByRole('button', { name: 'High Contrast', exact: true }).click()
   await expect(page.getByLabel('Generated markup')).toHaveValue('<#FFFFFF><b>PANTRY')
@@ -76,15 +76,53 @@ test('custom labels support editing, presets, symbols and advanced multiline', a
 })
 
 test('shared configurations do not overwrite local editor preferences', async ({ page }) => {
+  await page.getByRole('button', { name: 'Edit Wood', exact: true }).click()
+  await page.getByRole('button', { name: 'No Symbols', exact: true }).click()
   await page.getByLabel('Sign text', { exact: true }).fill('LOCAL LABEL')
   const before = await page.evaluate(() => JSON.parse(localStorage.getItem('valheim-sign-forge:v1')!))
-  const shared = { version: 1, sign: { ...before.sign, text: 'SHARED LABEL', color: 'FFFFFF' }, wood: 'light' }
+  expect(JSON.stringify(before)).not.toContain('LOCAL LABEL')
+  const shared = { version: 1, sign: { ...before.format, name: 'Shared sign', text: 'SHARED LABEL', symbol: '', color: 'FFFFFF' }, wood: 'light' }
   await page.goto(`/?sign=${encodeURIComponent(JSON.stringify(shared))}`)
   await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('SHARED LABEL')
   await expect(page.getByText(/You’re editing a shared sign/)).toBeVisible()
   await page.getByLabel('Sign text', { exact: true }).fill('SHARED EDIT')
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('valheim-sign-forge:v1')!))).toEqual(before)
   await page.goto('/')
-  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('LOCAL LABEL')
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('WOOD')
+  await expect(page.getByLabel('Include', { exact: true })).not.toBeChecked()
+})
+
+test('makes an ephemeral sign from any search without saving it to browser storage or collections', async ({ page }) => {
+  await page.getByRole('textbox', { name: 'Search items' }).fill('Jason’s north gate')
+  await page.getByRole('button', { name: /Make a sign from this search/ }).click()
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('Jason’s north gate')
+  await page.getByRole('button', { name: 'Copy plain text', exact: true }).click()
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('Jason’s north gate')
+  await page.getByLabel('Include', { exact: true }).check()
+  await page.locator('#symbol').fill('SECRET SYMBOL')
+  const stored = await page.evaluate(() => ({ local: JSON.stringify(localStorage), session: JSON.stringify(sessionStorage) }))
+  expect(JSON.stringify(stored)).not.toMatch(/Jason|SECRET SYMBOL/)
+  await page.reload()
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('COPPER')
+  await expect(page.locator('#symbol')).not.toHaveValue('SECRET SYMBOL')
+  await page.getByRole('button', { name: 'Recent', exact: true }).click()
+  await expect(page.getByRole('button', { name: /Edit Jason/ })).toHaveCount(0)
+})
+
+test('browses grouped labels and finds later-biome resources', async ({ page }) => {
+  await page.getByRole('button', { name: 'Groups', exact: true }).click()
+  for (const name of ['Wood & bark', 'Hides & leather', 'Mushrooms', 'Berries', 'Fish']) await expect(page.getByRole('button', { name: `Edit ${name}`, exact: true })).toBeVisible()
+  await page.getByRole('textbox', { name: 'Search items' }).fill('raspberries')
+  await page.getByRole('button', { name: 'Edit Berries', exact: true }).click()
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('BERRIES')
+  await page.getByRole('button', { name: 'Clear search', exact: true }).click()
+  await page.getByRole('button', { name: 'All labels', exact: true }).click()
+  await page.getByRole('button', { name: /^Mistlands \d+$/ }).click()
+  await expect(page.getByRole('button', { name: 'Edit Yggdrasil Wood', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: /^Ashlands \d+$/ }).click()
+  await expect(page.getByRole('button', { name: 'Edit Ashwood', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: /^Deep North \d+$/ }).click()
+  await expect(page.getByRole('button', { name: 'Edit Timberwood', exact: true })).toBeVisible()
 })
 
 test('imports and exports a validated custom configuration', async ({ page }) => {

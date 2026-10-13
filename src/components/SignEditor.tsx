@@ -30,9 +30,10 @@ export default function SignEditor({ sign, wood, item, custom, patch, setWood, o
     <div className="editor-form">
       <div className="form-section-title"><h3><Sparkles size={14} /> Start with a style</h3><div className="flex gap-3"><button className="text-button" onClick={() => patch({ text: '' })}>Clear</button><button className="text-button" onClick={onReset}><RotateCcw size={12} /> Reset</button></div></div>
       <div className="preset-grid" aria-label="Formatting presets">{PRESETS.map(preset => <button key={preset} aria-pressed={sign.preset === preset} onClick={() => onPreset(preset)}>{preset}</button>)}</div>
-      {custom && <label className="field-label">Custom label name<input value={sign.name} placeholder="e.g. North wall supplies" onChange={event => patch({ name: event.target.value })} /></label>}
+      {custom && <p className="draft-notice"><strong>Temporary custom sign</strong>Type anything below. It stays in this tab and is never added to the catalog or saved in your browser.</p>}
       <div className="field-label"><label htmlFor="sign-text">Sign text</label><span>Make it yours</span></div>
-      <textarea id="sign-text" className="text-editor" value={sign.text} rows={sign.advanced ? 3 : 2} spellCheck={false} onChange={event => patch({ text: event.target.value })} />
+      <textarea id="sign-text" className="text-editor" value={sign.text} placeholder="e.g. NORTH GATE or SMELTER SUPPLIES" rows={sign.advanced ? 3 : 2} spellCheck={false} onChange={event => patch({ text: event.target.value })} />
+      <p className="item-note">Text edits are temporary. Copy your sign before closing or reloading this page.</p>
       {item?.note && <p className="item-note">{item.note}</p>}
       {shortLabel(sign.text) !== sign.text && <button className="shorten-button" onClick={() => patch({ text: shortLabel(sign.text) })}>Use shorter label: <strong>{shortLabel(sign.text)}</strong></button>}
       <div className="format-grid">

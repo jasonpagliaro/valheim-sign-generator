@@ -1,15 +1,15 @@
 # Verification record
 
-Checked October 12, 2026. User story: browse a local catalog, edit a label, see a modeled sign, and paste the exact generated text from the clipboard into Valheim.
+Checked October 13, 2026. User story: browse the complete current inventory and storage groups, create a temporary custom label, see a modeled sign, and copy the exact generated text for Valheim.
 
 ## Local checks
 
 - ESLint: passed.
 - TypeScript: passed.
-- Vitest: 44 tests passed across formatter, catalog integrity/filtering, preferences, sharing, and import/export.
-- Vite production build: passed. Client bundle approximately 90 KB gzipped, plus approximately 9 KB CSS.
+- Vitest: 48 tests passed across formatter, native inventory coverage, original catalog integrity, groups/filtering, temporary-text storage, preference migration, sharing, and import/export.
+- Vite production build: passed. Client bundle approximately 108 KB gzipped, plus approximately 9 KB CSS.
 - Dependency installation audit: zero reported vulnerabilities at installation.
-- Playwright: 30 checks passed using real Microsoft Edge (Chromium), covering 1440×1080 desktop, 390×844 mobile, and 820×1180 tablet viewports.
+- Playwright: 36 checks passed using real Microsoft Edge (Chromium), covering 1440×1080 desktop, 390×844 mobile, and 820×1180 tablet viewports (1.7 minutes).
 - Screenshots were inspected for desktop, mobile, and tablet; all three viewports have automated horizontal-overflow checks and screenshots in `docs/screenshots/`.
 
 ## Browser coverage
@@ -18,7 +18,7 @@ Each viewport covers:
 
 1. Search, item selection, live preview colors, formatting, real Clipboard API write/read equality, and ASCII fallback.
 2. Individual catalog copy and complete category JSON copy.
-3. Favorites, recents, and editor settings surviving reload.
+3. Favorites, recents, catalog selection, and formatting surviving reload while draft text does not.
 4. Over-limit text preserved; invalid colors and raw markup blocked; arbitrary user markup rendered as inert text.
 5. Custom label editing, presets, symbol controls, advanced alignment, and encoded multiline plain output.
 6. Shared-link configuration isolated from saved local editor preferences.
@@ -26,6 +26,12 @@ Each viewport covers:
 8. Manual-copy dialog after simulated Clipboard API and selection-copy failure. Normal clipboard tests are not mocked.
 9. No horizontal page overflow, browser exceptions, or third-party application requests on load.
 10. Keyboard search and modal guide dismissal.
+11. Any search becoming an editable custom sign, real plain-text clipboard readback, and custom text/symbol absence from both local and session storage. Reload restores a catalog sign; the custom entry never appears in recents.
+12. Groups discovery and member-name search, followed by direct Mistlands, Ashlands and Deep North resource selection.
+
+The data checks reconcile all 893 accepted item identities against actual catalog membership and account for all 1,519 native prefabs. Every accepted identity appears exactly once. The 184 original tuples remain unchanged, including their normalized SHA-256. Family checks cover moulds, casts, idols, trinkets, fish, feasts and the five conditional items. Legacy/unresolved IDs stay outside ordinary current inventory.
+
+The React checklist was applied to the edited components. Draft state stays local to React; versioned storage contains only an explicit formatting/catalog-ID whitelist. The native audit is documentation only and is not shipped in the client bundle. UI screenshots were inspected at all three tested sizes.
 
 Clipboard tests run sequentially because host clipboard state can be shared across browser contexts. CI uses bundled Chromium on Linux rather than the installed Edge browser.
 
@@ -33,7 +39,7 @@ Clipboard tests run sequentially because host clipboard state can be shared acro
 
 Mobile and tablet checks emulate viewport/input characteristics in Chromium; they are not physical iOS/Safari device tests. Sign markup, length handling, defaults, and fonts were inspected in installed Valheim 1.0.17, but the generated labels have not been visually tested in an active game world. See the compatibility record for those limits. There are no backend/API/data-service boundaries to verify because all app functionality is local to the browser.
 
-## Production release
+## Initial production release (October 12)
 
 - Public site: https://valheim-sign-generator.vercel.app
 - Public repository: https://github.com/jasonpagliaro/valheim-sign-generator
