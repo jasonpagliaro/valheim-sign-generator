@@ -10,7 +10,7 @@ Checked October 12, 2026. User story: browse a local catalog, edit a label, see 
 - Vite production build: passed. Client bundle approximately 90 KB gzipped, plus approximately 9 KB CSS.
 - Dependency installation audit: zero reported vulnerabilities at installation.
 - Playwright: 30 checks passed using real Microsoft Edge (Chromium), covering 1440×1080 desktop, 390×844 mobile, and 820×1180 tablet viewports.
-- Screenshots were inspected for desktop and mobile; all three viewports have automated horizontal-overflow checks and screenshots in `docs/screenshots/`.
+- Screenshots were inspected for desktop, mobile, and tablet; all three viewports have automated horizontal-overflow checks and screenshots in `docs/screenshots/`.
 
 ## Browser coverage
 
@@ -33,4 +33,17 @@ Clipboard tests run sequentially because host clipboard state can be shared acro
 
 Mobile and tablet checks emulate viewport/input characteristics in Chromium; they are not physical iOS/Safari device tests. Sign markup, length handling, defaults, and fonts were inspected in installed Valheim 1.0.17, but the generated labels have not been visually tested in an active game world. See the compatibility record for those limits. There are no backend/API/data-service boundaries to verify because all app functionality is local to the browser.
 
-Production and Git integration results will be recorded after release.
+## Production release
+
+- Public site: https://valheim-sign-generator.vercel.app
+- Public repository: https://github.com/jasonpagliaro/valheim-sign-generator
+- Initial source commit: `054c963d5b8d669285551497325f3085d9c48326`.
+- Vercel project: `valheim-sign-generator`, project ID `prj_9EXZFcTNyRRQ3wORvZJlO5L5EuAA`, in the owner's personal Hobby workspace.
+- Production deployment `dpl_FGRfqLTjXZL3HHTJD5U1eGsVKQjq` reached `READY`; public origin returned HTTP 200 and the expected application title without authentication.
+- The same 30 browser checks passed against the public production origin, including real clipboard readback across desktop/mobile/tablet viewports (40.3 seconds).
+- [GitHub Actions run 38334371659](https://github.com/jasonpagliaro/valheim-sign-generator/actions/runs/38334371659) passed all checks, including the 30 browser cases on Linux Chromium.
+- No paid upgrade, purchased domain, server, or database was used.
+
+## Pending Git integration
+
+The first release used the authenticated Vercel source-deployment API. Automatic GitHub deployment is not yet configured: Vercel's GitHub installation uses selected repositories and did not expose this new repository when checked. The owner is completing the app-access step. Once access is granted, link this existing Vercel project to `jasonpagliaro/valheim-sign-generator`, production branch `main`, and verify a new push results in a `READY` production deployment. Do not create a duplicate project.
