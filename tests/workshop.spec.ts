@@ -1,0 +1,140 @@
+import { test, expect } from '@playwright/test'
+
+test.beforeEach(async ({ page }) => { await page.goto('/') })
+
+test('renders, filters, selects, formats, and copies a real sign', async ({ page }) => {
+  await expect(page.getByRole('heading', { name: 'Make your mark' })).toBeVisible()
+  await page.getByRole('textbox', { name: 'Search items' }).fill('silver')
+  await expect(page.getByRole('button', { name: 'Edit Silver', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Edit Silver', exact: true }).click()
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('SILVER')
+  await expect(page.getByTestId('sign-preview')).toHaveCSS('color', 'rgb(201, 238, 255)')
+  await expect(page.getByLabel('Generated markup')).toHaveValue('<#C9EEFF><b>⛏ SILVER')
+  await page.getByRole('button', { name: 'Copy sign code', exact: true }).click()
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('<#C9EEFF><b>⛏ SILVER')
+  await expect(page.getByRole('status')).toContainText('Sign code copied')
+  await page.getByRole('button', { name: 'Italic', exact: true }).click()
+  await expect(page.getByLabel('Generated markup')).toHaveValue('<#C9EEFF><b><i>⛏ SILVER')
+  await page.getByRole('button', { name: 'Copy ASCII fallback' }).click()
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('SILVER')
+})
+
+test('copies a catalog entry and a complete category', async ({ page }) => {
+  await page.getByRole('button', { name: 'Copy Stone', exact: true }).click()
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('<#B9B9B9><b>◆ STONE')
+  await page.getByRole('button', { name: /^Ocean \d+$/ }).click()
+  await expect(page.getByRole('button', { name: 'Edit Chitin', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Edit Wood', exact: true })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Copy Ocean', exact: true }).click()
+  const payload = JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))
+  expect(payload.labels.length).toBe(20)
+  expect(payload.labels.every((item: { category: string }) => item.category === 'Ocean')).toBe(true)
+})
+
+test('favorites, recent items, and editing settings survive reload', async ({ page }) => {
+  await page.getByRole('button', { name: 'Favorite Wood', exact: true }).click()
+  await page.getByRole('button', { name: 'Favorites', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Edit Wood', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Edit Wood', exact: true }).click()
+  await page.getByRole('button', { name: 'No Symbols', exact: true }).click()
+  await page.reload()
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('WOOD')
+  await expect(page.getByLabel('Include', { exact: true })).not.toBeChecked()
+  await page.getByRole('button', { name: 'Favorites', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Edit Wood', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Recent', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Edit Wood', exact: true })).toBeVisible()
+})
+
+test('warns about overflow, rejects markup input, and previews text safely', async ({ page }) => {
+  await page.getByLabel('Sign text', { exact: true }).fill('A'.repeat(100))
+  await expect(page.getByRole('alert')).toContainText('too long')
+  await expect(page.getByRole('button', { name: 'Copy sign code', exact: true })).toBeDisabled()
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('A'.repeat(100))
+  await page.getByLabel('Sign text', { exact: true }).fill('<img src=x onerror=alert(1)>')
+  await expect(page.getByTestId('sign-preview')).toContainText('<img src=x onerror=alert(1)>')
+  await expect(page.getByTestId('sign-preview').locator('img')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Copy sign code', exact: true })).toBeDisabled()
+  await page.getByLabel('Sign text', { exact: true }).fill('WOOD')
+  await page.getByLabel('Text color', { exact: true }).fill('bad color')
+  await expect(page.getByRole('alert')).toContainText('valid 3- or 6-digit')
+})
+
+test('custom labels support editing, presets, symbols and advanced multiline', async ({ page }) => {
+  await page.getByRole('button', { name: /Create a custom label/ }).click()
+  await page.getByLabel('Custom label name').fill('My pantry')
+  await page.getByLabel('Sign text', { exact: true }).fill('PANTRY')
+  await page.getByRole('button', { name: 'High Contrast', exact: true }).click()
+  await expect(page.getByLabel('Generated markup')).toHaveValue('<#FFFFFF><b>PANTRY')
+  await page.getByText('Advanced formatting', { exact: true }).click()
+  await page.getByLabel('Enable alignment & multiple lines').check()
+  await page.getByLabel('Sign text', { exact: true }).fill('BREAD\nMEAD')
+  await page.getByRole('button', { name: 'Align left', exact: true }).click()
+  await expect(page.getByLabel('Generated markup')).toHaveValue('<#FFFFFF><b><align=left>BREAD\\nMEAD')
+  await page.getByRole('button', { name: 'Copy plain text', exact: true }).click()
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe('BREAD\\nMEAD')
+})
+
+test('shared configurations do not overwrite local editor preferences', async ({ page }) => {
+  await page.getByLabel('Sign text', { exact: true }).fill('LOCAL LABEL')
+  const before = await page.evaluate(() => JSON.parse(localStorage.getItem('valheim-sign-forge:v1')!))
+  const shared = { version: 1, sign: { ...before.sign, text: 'SHARED LABEL', color: 'FFFFFF' }, wood: 'light' }
+  await page.goto(`/?sign=${encodeURIComponent(JSON.stringify(shared))}`)
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('SHARED LABEL')
+  await expect(page.getByText(/You’re editing a shared sign/)).toBeVisible()
+  await page.getByLabel('Sign text', { exact: true }).fill('SHARED EDIT')
+  await page.goto('/')
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('LOCAL LABEL')
+})
+
+test('imports and exports a validated custom configuration', async ({ page }) => {
+  await page.getByRole('button', { name: /Create a custom label/ }).click()
+  await page.getByLabel('Sign text', { exact: true }).fill('SOUTH GATE')
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export JSON', exact: true }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toBe('custom-label-sign.json')
+  const file = await download.path()
+  await page.getByLabel('Sign text', { exact: true }).fill('DIFFERENT')
+  await page.getByLabel('Import sign configuration').setInputFiles(file!)
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('SOUTH GATE')
+  await page.getByLabel('Import sign configuration').setInputFiles({ name: 'broken.json', mimeType: 'application/json', buffer: Buffer.from('{"version":2}') })
+  await expect(page.getByRole('status')).toContainText('version 1')
+  await expect(page.getByLabel('Sign text', { exact: true })).toHaveValue('SOUTH GATE')
+})
+
+test('shows a usable manual-copy dialog when clipboard methods fail', async ({ page }) => {
+  await page.evaluate(() => {
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async () => { throw new Error('denied') } } })
+    document.execCommand = () => false
+  })
+  await page.getByRole('button', { name: 'Copy sign code', exact: true }).click()
+  await expect(page.getByRole('dialog', { name: 'Copy by hand' })).toBeVisible()
+  await expect(page.getByLabel('Text for manual copy')).toHaveValue('<#E8A575><b>⛏ COPPER')
+  await page.getByRole('button', { name: 'Done', exact: true }).click()
+  await expect(page.getByRole('dialog', { name: 'Copy by hand' })).not.toBeVisible()
+})
+
+test('has no horizontal overflow, runtime errors, or external app requests', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  const external: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('request', request => { if (new URL(request.url()).origin !== new URL(page.url()).origin) external.push(request.url()) })
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Make your mark' })).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  await page.screenshot({ path: `docs/screenshots/${testInfo.project.name}.png`, fullPage: true })
+  expect(errors).toEqual([])
+  expect(external).toEqual([])
+})
+
+test('search shortcut and guide work by keyboard', async ({ page }) => {
+  await page.keyboard.press('/')
+  await expect(page.getByLabel('Search items')).toBeFocused()
+  await page.keyboard.type('acorns')
+  await expect(page.getByRole('button', { name: 'Edit Oak seeds', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Field guide', exact: true }).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+})

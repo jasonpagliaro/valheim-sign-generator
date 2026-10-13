@@ -1,0 +1,938 @@
+{
+  "Meadows": [
+    [
+      "Wood",
+      "🪵",
+      "8CD66E"
+    ],
+    [
+      "Fine wood",
+      "🪵",
+      "D6B46F"
+    ],
+    [
+      "Stone",
+      "◆",
+      "B9B9B9"
+    ],
+    [
+      "Flint",
+      "◆",
+      "A7DEF0"
+    ],
+    [
+      "Resin",
+      "●",
+      "FFCE49"
+    ],
+    [
+      "Coal",
+      "●",
+      "8C8C8C"
+    ],
+    [
+      "Deer hide",
+      "♜",
+      "C78E56"
+    ],
+    [
+      "Deer trophy",
+      "♜",
+      "E2A765"
+    ],
+    [
+      "Leather scraps",
+      "◈",
+      "D1A26D"
+    ],
+    [
+      "Boar trophy",
+      "♜",
+      "D9A269"
+    ],
+    [
+      "Raw boar meat",
+      "🥩",
+      "E98886"
+    ],
+    [
+      "Raw deer meat",
+      "🥩",
+      "DF7975"
+    ],
+    [
+      "Neck tail",
+      "🦎",
+      "91C970"
+    ],
+    [
+      "Neck trophy",
+      "♜",
+      "80CF76"
+    ],
+    [
+      "Raspberries",
+      "🍓",
+      "FF617D"
+    ],
+    [
+      "Mushroom",
+      "🍄",
+      "F38B6F"
+    ],
+    [
+      "Dandelion",
+      "✿",
+      "FFDC57"
+    ],
+    [
+      "Beech seeds",
+      "🌱",
+      "96D988"
+    ],
+    [
+      "Birch seeds",
+      "🌱",
+      "A5DE8D"
+    ],
+    [
+      "Oak seeds",
+      "🌱",
+      "C9AD78"
+    ],
+    [
+      "Honey",
+      "🍯",
+      "F9C856"
+    ],
+    [
+      "Queen bee",
+      "♛",
+      "F5D65A"
+    ],
+    [
+      "Eikthyr trophy",
+      "♜",
+      "FFD76B"
+    ],
+    [
+      "Hard antler",
+      "♜",
+      "E5E0C9"
+    ],
+    [
+      "Bear pelt",
+      "♜",
+      "D4B089"
+    ],
+    [
+      "Bear meat",
+      "🥩",
+      "C87970"
+    ]
+  ],
+  "Black Forest": [
+    [
+      "Core wood",
+      "🪵",
+      "B68C54"
+    ],
+    [
+      "Copper ore",
+      "⛏",
+      "D78A60"
+    ],
+    [
+      "Copper",
+      "⛏",
+      "E8A575"
+    ],
+    [
+      "Tin ore",
+      "⛏",
+      "B6D4D7"
+    ],
+    [
+      "Tin",
+      "⛏",
+      "D9E9ED"
+    ],
+    [
+      "Bronze",
+      "⛏",
+      "E9AE52"
+    ],
+    [
+      "Bronze nails",
+      "⚒",
+      "E9AE52"
+    ],
+    [
+      "Blueberries",
+      "🫐",
+      "829DFF"
+    ],
+    [
+      "Yellow mushroom",
+      "🍄",
+      "FFE178"
+    ],
+    [
+      "Carrot",
+      "🥕",
+      "FFA35A"
+    ],
+    [
+      "Carrot seeds",
+      "🌱",
+      "E0BC70"
+    ],
+    [
+      "Thistle",
+      "✿",
+      "9D89F4"
+    ],
+    [
+      "Greydwarf eye",
+      "👁",
+      "69C8EF"
+    ],
+    [
+      "Ancient seed",
+      "🌱",
+      "90CD6F"
+    ],
+    [
+      "Greydwarf trophy",
+      "♜",
+      "78AE8A"
+    ],
+    [
+      "Greydwarf brute trophy",
+      "♜",
+      "86BF94"
+    ],
+    [
+      "Greydwarf shaman trophy",
+      "♜",
+      "86BF94"
+    ],
+    [
+      "Troll hide",
+      "◈",
+      "69ADDE"
+    ],
+    [
+      "Troll trophy",
+      "♜",
+      "76AEEF"
+    ],
+    [
+      "Bone fragments",
+      "☠",
+      "E3DEC8"
+    ],
+    [
+      "Skeleton trophy",
+      "☠",
+      "DDD9C7"
+    ],
+    [
+      "Rancid remains trophy",
+      "☠",
+      "9BE384"
+    ],
+    [
+      "Surtling core",
+      "🔥",
+      "FF8450"
+    ],
+    [
+      "Coins",
+      "🪙",
+      "FFD66E"
+    ],
+    [
+      "Amber",
+      "◆",
+      "F0B45A"
+    ],
+    [
+      "Amber pearl",
+      "◆",
+      "FFE2A2"
+    ],
+    [
+      "Ruby",
+      "♦",
+      "FF6470"
+    ],
+    [
+      "Elder trophy",
+      "♜",
+      "89D280"
+    ],
+    [
+      "Swamp key",
+      "⚿",
+      "A7DBA2"
+    ]
+  ],
+  "Swamp": [
+    [
+      "Iron scrap",
+      "⛏",
+      "A6B5BC"
+    ],
+    [
+      "Iron",
+      "⛏",
+      "C5D6DE"
+    ],
+    [
+      "Iron nails",
+      "⚒",
+      "C7D6DF"
+    ],
+    [
+      "Ancient bark",
+      "🪵",
+      "A39A77"
+    ],
+    [
+      "Withered bone",
+      "☠",
+      "C7C19B"
+    ],
+    [
+      "Entrails",
+      "🥩",
+      "D17C86"
+    ],
+    [
+      "Bloodbag",
+      "♥",
+      "D95464"
+    ],
+    [
+      "Leech trophy",
+      "♜",
+      "BD6B77"
+    ],
+    [
+      "Draugr trophy",
+      "☠",
+      "97C6A0"
+    ],
+    [
+      "Draugr elite trophy",
+      "☠",
+      "B0D1AD"
+    ],
+    [
+      "Blob trophy",
+      "●",
+      "A6DF72"
+    ],
+    [
+      "Ooze trophy",
+      "●",
+      "A7E178"
+    ],
+    [
+      "Ooze",
+      "●",
+      "97D65B"
+    ],
+    [
+      "Guck",
+      "●",
+      "AFE76A"
+    ],
+    [
+      "Root",
+      "🌿",
+      "B8A87C"
+    ],
+    [
+      "Abomination trophy",
+      "♜",
+      "9CBB79"
+    ],
+    [
+      "Chain",
+      "⛓",
+      "C0C8CE"
+    ],
+    [
+      "Surtling trophy",
+      "🔥",
+      "FF9B57"
+    ],
+    [
+      "Turnip",
+      "🥬",
+      "E6D17A"
+    ],
+    [
+      "Turnip seeds",
+      "🌱",
+      "D5CE71"
+    ],
+    [
+      "Wraith trophy",
+      "♜",
+      "9AC9E4"
+    ],
+    [
+      "Bonemass trophy",
+      "♜",
+      "9EDE80"
+    ],
+    [
+      "Wishbone",
+      "✦",
+      "DFE8F5"
+    ]
+  ],
+  "Mountains": [
+    [
+      "Silver ore",
+      "⛏",
+      "9FD5ED"
+    ],
+    [
+      "Silver",
+      "⛏",
+      "C9EEFF"
+    ],
+    [
+      "Obsidian",
+      "◆",
+      "A6A8D1"
+    ],
+    [
+      "Crystal",
+      "💎",
+      "9AEAFF"
+    ],
+    [
+      "Freeze gland",
+      "❄",
+      "8FCBFF"
+    ],
+    [
+      "Wolf pelt",
+      "🐺",
+      "D2DCEB"
+    ],
+    [
+      "Wolf fang",
+      "♜",
+      "D7E6EE"
+    ],
+    [
+      "Wolf meat",
+      "🥩",
+      "E6999A"
+    ],
+    [
+      "Wolf trophy",
+      "🐺",
+      "C8E5ED"
+    ],
+    [
+      "Fenris hair",
+      "◈",
+      "D6C6F5"
+    ],
+    [
+      "Fenris claw",
+      "♜",
+      "DDD0F0"
+    ],
+    [
+      "Ulve trophy",
+      "♜",
+      "C5B5E7"
+    ],
+    [
+      "Cultist trophy",
+      "♜",
+      "D0A3EC"
+    ],
+    [
+      "Red jute",
+      "◈",
+      "DA787C"
+    ],
+    [
+      "Dragon egg",
+      "🥚",
+      "E0B7EF"
+    ],
+    [
+      "Dragon tear",
+      "💧",
+      "9AE3FF"
+    ],
+    [
+      "Drake trophy",
+      "♜",
+      "99CFFF"
+    ],
+    [
+      "Stone golem trophy",
+      "♜",
+      "C7E3F0"
+    ],
+    [
+      "Onion",
+      "🧅",
+      "D6ADDB"
+    ],
+    [
+      "Onion seeds",
+      "🌱",
+      "D1B7DD"
+    ],
+    [
+      "Moder trophy",
+      "♜",
+      "A3DCFF"
+    ]
+  ],
+  "Plains": [
+    [
+      "Black metal scrap",
+      "⛏",
+      "878EAC"
+    ],
+    [
+      "Black metal",
+      "⛏",
+      "B0B9D3"
+    ],
+    [
+      "Flax",
+      "🌾",
+      "DFCBE9"
+    ],
+    [
+      "Linen thread",
+      "◈",
+      "E5D7F5"
+    ],
+    [
+      "Barley",
+      "🌾",
+      "F5D17A"
+    ],
+    [
+      "Barley flour",
+      "🌾",
+      "F4E3AD"
+    ],
+    [
+      "Cloudberries",
+      "🫐",
+      "F5B66C"
+    ],
+    [
+      "Lox meat",
+      "🥩",
+      "D28D71"
+    ],
+    [
+      "Lox pelt",
+      "◈",
+      "B9A18A"
+    ],
+    [
+      "Lox trophy",
+      "♜",
+      "D4B495"
+    ],
+    [
+      "Fuling trophy",
+      "♜",
+      "DFB76B"
+    ],
+    [
+      "Fuling berserker trophy",
+      "♜",
+      "DDBB7C"
+    ],
+    [
+      "Fuling shaman trophy",
+      "♜",
+      "E9BD6E"
+    ],
+    [
+      "Needle",
+      "✦",
+      "E8E2B8"
+    ],
+    [
+      "Tar",
+      "●",
+      "8383B6"
+    ],
+    [
+      "Growth trophy",
+      "♜",
+      "9C8FCB"
+    ],
+    [
+      "Yagluth thing",
+      "✦",
+      "F4AE69"
+    ],
+    [
+      "Yagluth trophy",
+      "♜",
+      "FFAF62"
+    ],
+    [
+      "Torn spirit",
+      "✧",
+      "E4B1F2"
+    ],
+    [
+      "Black metal chest",
+      "▣",
+      "A7B2CC"
+    ]
+  ],
+  "Ocean": [
+    [
+      "Chitin",
+      "◆",
+      "B5E2E0"
+    ],
+    [
+      "Serpent meat",
+      "🥩",
+      "83C8CE"
+    ],
+    [
+      "Serpent scale",
+      "◈",
+      "80D1DC"
+    ],
+    [
+      "Serpent trophy",
+      "♜",
+      "91C9E8"
+    ],
+    [
+      "Raw fish",
+      "🐟",
+      "8DCAE9"
+    ],
+    [
+      "Fish",
+      "🐟",
+      "A1DDF5"
+    ],
+    [
+      "Fishing bait",
+      "◈",
+      "D4B798"
+    ]
+  ],
+  "Food & Mead": [
+    [
+      "Cooked boar meat",
+      "🍖",
+      "F09B82"
+    ],
+    [
+      "Cooked deer meat",
+      "🍖",
+      "EC9D84"
+    ],
+    [
+      "Grilled neck tail",
+      "🍖",
+      "D9BC82"
+    ],
+    [
+      "Cooked bear meat",
+      "🍖",
+      "D4A082"
+    ],
+    [
+      "Cooked fish",
+      "🐟",
+      "E7B58E"
+    ],
+    [
+      "Cooked wolf meat",
+      "🍖",
+      "ECA09B"
+    ],
+    [
+      "Cooked lox meat",
+      "🍖",
+      "DFA07A"
+    ],
+    [
+      "Cooked serpent meat",
+      "🍖",
+      "94CBC6"
+    ],
+    [
+      "Boar jerky",
+      "🥓",
+      "DFA07A"
+    ],
+    [
+      "Wolf jerky",
+      "🥓",
+      "DFA6A0"
+    ],
+    [
+      "Deer stew",
+      "🍲",
+      "E3AD76"
+    ],
+    [
+      "Minced meat sauce",
+      "🍲",
+      "DD9984"
+    ],
+    [
+      "Carrot soup",
+      "🍲",
+      "FFA758"
+    ],
+    [
+      "Queen's jam",
+      "🍯",
+      "DA75B2"
+    ],
+    [
+      "Sausages",
+      "🌭",
+      "E8A06D"
+    ],
+    [
+      "Black soup",
+      "🍲",
+      "B38F8D"
+    ],
+    [
+      "Turnip stew",
+      "🍲",
+      "D9C781"
+    ],
+    [
+      "Muckshake",
+      "🥤",
+      "9DD17D"
+    ],
+    [
+      "Onion soup",
+      "🍲",
+      "DBC4A1"
+    ],
+    [
+      "Wolf skewer",
+      "🍖",
+      "DA9A84"
+    ],
+    [
+      "Eyescream",
+      "🍦",
+      "B5E4FF"
+    ],
+    [
+      "Blood pudding",
+      "🍮",
+      "CD7885"
+    ],
+    [
+      "Bread",
+      "🍞",
+      "F5CD81"
+    ],
+    [
+      "Lox meat pie",
+      "🥧",
+      "DBA36C"
+    ],
+    [
+      "Fish wraps",
+      "🌯",
+      "E5D7AA"
+    ],
+    [
+      "Serpent stew",
+      "🍲",
+      "9BCFC8"
+    ],
+    [
+      "Mead base",
+      "🍯",
+      "F0CB7C"
+    ],
+    [
+      "Healing mead",
+      "♥",
+      "FA8F90"
+    ],
+    [
+      "Stamina mead",
+      "⚡",
+      "FFD56A"
+    ],
+    [
+      "Poison resist mead",
+      "◈",
+      "A7DE71"
+    ],
+    [
+      "Frost resist mead",
+      "❄",
+      "9CD9FF"
+    ],
+    [
+      "Fire resist mead",
+      "🔥",
+      "FFA175"
+    ],
+    [
+      "Tasty mead",
+      "🍯",
+      "F5C57C"
+    ],
+    [
+      "Bukeperries",
+      "●",
+      "CF9CF0"
+    ]
+  ],
+  "Equipment & Misc": [
+    [
+      "Arrows",
+      "➤",
+      "EACB86"
+    ],
+    [
+      "Wood arrows",
+      "➤",
+      "C4A378"
+    ],
+    [
+      "Flinthead arrows",
+      "➤",
+      "B9D7CB"
+    ],
+    [
+      "Bronzehead arrows",
+      "➤",
+      "E4B16E"
+    ],
+    [
+      "Ironhead arrows",
+      "➤",
+      "C9DAE0"
+    ],
+    [
+      "Obsidian arrows",
+      "➤",
+      "B6B2E0"
+    ],
+    [
+      "Frost arrows",
+      "❄",
+      "99D5FF"
+    ],
+    [
+      "Fire arrows",
+      "🔥",
+      "FF9A61"
+    ],
+    [
+      "Poison arrows",
+      "☠",
+      "A8D97A"
+    ],
+    [
+      "Silver arrows",
+      "➤",
+      "C6E9F4"
+    ],
+    [
+      "Needle arrows",
+      "➤",
+      "EAE4B6"
+    ],
+    [
+      "Weapons",
+      "⚔",
+      "F1C675"
+    ],
+    [
+      "Armor",
+      "♜",
+      "BED8E6"
+    ],
+    [
+      "Shields",
+      "⬡",
+      "D0B999"
+    ],
+    [
+      "Tools",
+      "⚒",
+      "D5C69D"
+    ],
+    [
+      "Potions",
+      "⚗",
+      "C6B0ED"
+    ],
+    [
+      "Trophies",
+      "♜",
+      "D9ACF1"
+    ],
+    [
+      "Treasure",
+      "💎",
+      "FFD46C"
+    ],
+    [
+      "Seeds",
+      "🌱",
+      "B7E080"
+    ],
+    [
+      "Portal supplies",
+      "✧",
+      "8ED6E3"
+    ],
+    [
+      "Building supplies",
+      "⚒",
+      "D9B886"
+    ],
+    [
+      "Dungeon loot",
+      "◆",
+      "CBB2E7"
+    ],
+    [
+      "Extra gear",
+      "⚔",
+      "BED3DF"
+    ],
+    [
+      "Repair supplies",
+      "⚒",
+      "E3BB80"
+    ]
+  ]
+}
